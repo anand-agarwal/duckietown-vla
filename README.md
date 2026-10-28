@@ -1,47 +1,31 @@
-# Template: template-ros
+# Duckietown VLA
 
-This template provides a boilerplate repository
-for developing ROS-based software in Duckietown.
+This project aims to build a vision-language-action (VLA) system for a Duckiebot. The goal is for a robot to use its camera and a natural-language instruction to determine and safely execute an appropriate driving action.
 
-**NOTE:** If you want to develop software that does not use
-ROS, check out [this template](https://github.com/duckietown/template-basic).
+## Project status
 
+This repository currently contains the Duckietown ROS development scaffold. The VLA pipeline and robot behaviors are not implemented yet.
 
-## How to use it
+## Intended system
 
-### 1. Fork this repository
+The initial system will connect these parts:
 
-Use the fork button in the top-right corner of the github page to fork this template repository.
+- **Vision:** Read camera observations from the Duckiebot and identify relevant road features, obstacles, and landmarks.
+- **Language grounding:** Interpret an instruction in the context of the current observation and the robot's capabilities.
+- **Action interface:** Convert the selected behavior into commands supported by the Duckietown ROS stack.
+- **Safety and evaluation:** Constrain motion, handle invalid or uncertain commands, and test behaviors in simulation before running on a physical robot.
 
+The system should keep high-level interpretation separate from low-level motion control so that generated actions remain bounded by the robot's existing control and safety mechanisms.
 
-### 2. Create a new repository
+## Repository layout
 
-Create a new repository on github.com while
-specifying the newly forked template repository as
-a template for your new repository.
+- `packages/` is where ROS packages and VLA components belong.
+- `launchers/` contains scripts exposed as Duckietown container launchers. Keep `launchers/default.sh` available.
+- `dependencies-apt.txt` and `dependencies-py3.txt` list system and Python dependencies.
+- `dependencies-py3.dt.txt` lists additional Python dependencies for Duckietown.
 
+## Development
 
-### 3. Define dependencies
+Use the Duckietown ROS development environment defined by this repository's `Dockerfile` and dependency files. Add implementation under `packages/`, declare required dependencies in the appropriate dependency file, and provide a launcher in `launchers/` for runnable components.
 
-List the dependencies in the files `dependencies-apt.txt` and
-`dependencies-py3.txt` (apt packages and pip packages respectively).
-
-
-### 4. Place your code
-
-Place your code in the directory `/packages/` of
-your new repository.
-
-
-### 5. Setup launchers
-
-The directory `/launchers` can contain as many launchers (launching scripts)
-as you want. A default launcher called `default.sh` must always be present.
-
-If you create an executable script (i.e., a file with a valid shebang statement)
-a launcher will be created for it. For example, the script file 
-`/launchers/my-launcher.sh` will be available inside the Docker image as the binary
-`dt-launcher-my-launcher`.
-
-When launching a new container, you can simply provide `dt-launcher-my-launcher` as
-command.
+Start by validating the perception-to-action path in simulation. Physical-robot testing should only follow once command limits, stop behavior, and failure handling are in place.
